@@ -6,6 +6,31 @@ const itemDescription = document.getElementsByClassName('cart__item__content__de
 const itemDelete = document.getElementsByClassName('deleteItem');
 const itemQuantity = document.getElementsByClassName('itemQuantity');
 
+function verifyInput(input){
+    if (input.id == 'email'){
+        let control = new RegExp(controlMail);
+        if (control.test(input.value)){
+            input.nextElementSibling.innerText = '';
+        } else{
+            input.nextElementSibling.innerText = 'Le mail doit être au format : adresse@domain.dot';
+        }
+    } else if(input.id == 'address'){
+        let control = new RegExp(controlAddress);
+        if (control.test(input.value)){
+            input.nextElementSibling.innerText = '';
+        } else{
+            input.nextElementSibling.innerText = 'L\'adresse semble incorrecte. Format attendu : N° typerue nomderue';
+        }
+    } else{
+        let control = new RegExp(controlNoNumber);
+        if (control.test(input.value)){
+            input.nextElementSibling.innerText = '';
+        } else{
+            input.nextElementSibling.innerText = 'Les nombres ne sont pas autorisés.'; 
+        }
+    }
+}
+
 function getCartEntry(e){
     let id = e.target.closest('article').getAttribute('data-id');
     let color = e.target.closest('article').getAttribute('data-color');
@@ -78,3 +103,6 @@ displayCartItems()
 
 cartItems.addEventListener('click', removeItem);
 cartItems.addEventListener('change', modifyQuantity);
+cartOrderForm.addEventListener('change', function(e){
+    verifyInput(e.target)
+})
