@@ -46,5 +46,13 @@ async function showProduct(){
     writeProduct(product);
 }
 
+addToCart.addEventListener('click', function(){
+    getLocalCart();
+    let color = colors.value;
+    let number = parseInt(quantity.value, 10);
+    addCartEntry(id, color, number);
+    setLocalCart(cart);
+})
+
 showProduct();
 

@@ -1,3 +1,19 @@
+let cart = [];
+
+function findCartEntry (id, color){
+    let cartEntry = cart.find(element => element.id === id && element.color === color);
+    return cartEntry;
+ }
+ 
+ 
+ function addCartEntry(id, color, quantity){
+     if (findCartEntry(id, color) != undefined){
+         findCartEntry(id, color).quantity += quantity;
+     } else{
+         cart.push({id: id, color:color, quantity: quantity})
+     }
+ }
+ 
 async function getProducts(id=""){
     products = fetch('http://localhost:3000/api/products/'+id)
     .then(function(res){
