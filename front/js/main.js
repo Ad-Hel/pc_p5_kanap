@@ -13,7 +13,19 @@ function findCartEntry (id, color){
          cart.push({id: id, color:color, quantity: quantity})
      }
  }
- 
+
+function setLocalCart(cart){
+    localStorage.setItem('cart', JSON.stringify(cart))
+}
+
+function getLocalCart(){
+    if (localStorage.getItem('cart') != null){
+        cart = JSON.parse(localStorage.getItem('cart'));
+    } else{
+        cart = [];
+    }
+}
+
 async function getProducts(id=""){
     products = fetch('http://localhost:3000/api/products/'+id)
     .then(function(res){
