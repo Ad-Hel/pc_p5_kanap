@@ -14,6 +14,26 @@ function findCartEntry (id, color){
      }
  }
 
+ function modifyCartEntry(id, color, quantity){
+    if (findCartEntry(id, color) != undefined){
+        findCartEntry(id,color).quantity = quantity;
+    } else{
+        cart.push({id: id, color: color, quantity: quantity})
+    }
+}
+
+function deleteCartEntry(id, color){
+    if (findCartEntry(id, color) != undefined){
+        findCartEntry(id, color).quantity = 0;
+    } else{
+        console.log("Impossible to delete undefined cart entry. Id = "+id +" Color: "+color)
+    }
+}
+
+function cleanCart(){
+    cart = cart.filter(entry => entry.quantity > 0)
+}
+
 function setLocalCart(cart){
     localStorage.setItem('cart', JSON.stringify(cart))
 }

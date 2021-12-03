@@ -6,6 +6,34 @@ const itemDescription = document.getElementsByClassName('cart__item__content__de
 const itemDelete = document.getElementsByClassName('deleteItem');
 const itemQuantity = document.getElementsByClassName('itemQuantity');
 
+function getCartEntry(e){
+    let id = e.target.closest('article').getAttribute('data-id');
+    let color = e.target.closest('article').getAttribute('data-color');
+    return [id, color];
+}
+
+function removeItem(e){
+    let [id, color] = getCartEntry(e);
+    if (e.target.classList.contains('deleteItem')){
+        console.log('click supprimer')
+        deleteCartEntry(id, color);
+        cleanCart();
+        setLocalCart(cart)
+        e.target.closest('article').remove();
+    }
+}
+
+function modifyQuantity(e){
+    let [id, color] = getCartEntry(e);
+    let quantity = parseInt(e.target.value, 10);
+    if (e.target.classList.contains('itemQuantity')){
+        console.log('change quantity');
+        modifyCartEntry(id, color, quantity);
+        cleanCart();
+        setLocalCart(cart)
+    }
+}
+
 function writeHtml(cartItem){
     cartItems.insertAdjacentHTML('beforeend', 
     `<article class="cart__item" data-id="${cartItem.id}" data-color="${cartItem.color}">
@@ -47,3 +75,6 @@ for (item of cart){
     writeHtml(item);
 }
 displayCartItems()
+
+cartItems.addEventListener('click', removeItem);
+cartItems.addEventListener('change', modifyQuantity);
