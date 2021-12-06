@@ -23,8 +23,8 @@ async function sendOrder(){
         }
     } )
     .then(function(res){
+        clearCart();
         window.location.href = './confirmation.html?orderId='+res.orderId;
-        console.log(res.orderId);
     })
     .catch(function(err){
         console.log("Oh non une erreur s'est produite : "+err);
@@ -195,6 +195,5 @@ orderButton.addEventListener('click', async function(e){
         orderContact = new FormData(cartOrderForm);
     }
     let res = await sendOrder();
-    console.log(res);
 })
 
