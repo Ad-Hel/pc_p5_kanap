@@ -30,6 +30,11 @@ function deleteCartEntry(id, color){
     }
 }
 
+function clearCart(){
+    cart = [];
+    localStorage.removeItem('cart');
+}
+
 function cleanCart(){
     cart = cart.filter(entry => entry.quantity > 0)
 }
