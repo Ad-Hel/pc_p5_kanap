@@ -5,6 +5,8 @@ const itemImg = document.getElementsByClassName('cart__item__img');
 const itemDescription = document.getElementsByClassName('cart__item__content__description');
 const itemDelete = document.getElementsByClassName('deleteItem');
 const itemQuantity = document.getElementsByClassName('itemQuantity');
+const totalPrice = document.getElementById('totalPrice');
+const totalQuantity = document.getElementById('totalQuantity');
 const cartOrderForm = document.getElementsByClassName('cart__order__form')[0];
 const orderButton = document.getElementById('order');
 const controlMail = '.{1,}@.{1,}\..';
@@ -112,17 +114,31 @@ function removeCartItem(e){
         setLocalCart(cart)
         e.target.closest('article').remove();
     }
+    displayTotal();
 }
 
 function modifyCartItemQuantity(e){
     let [id, color] = getCartItem(e);
     let quantity = parseInt(e.target.value, 10);
     if (e.target.classList.contains('itemQuantity')){
-        console.log('change quantity');
         modifyCartEntry(id, color, quantity);
         cleanCart();
         setLocalCart(cart)
     }
+    displayTotal();
+}
+
+async function displayTotal(){
+    let price = 0;
+    let quantity = 0;
+    for (let item of cartItem){
+        let product = await getProducts(item.getAttribute('data-id'));
+        let productQuantity = item.querySelector("input.itemQuantity").value;
+        price += product.price * productQuantity;
+        quantity += parseInt(productQuantity, 10);
+    }
+    totalPrice.innerText = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR'}).format(price);
+    totalQuantity.innerText = quantity;
 }
 
 function writeHtml(cartItem){
@@ -165,7 +181,8 @@ async function displayCartItems(){
 for (item of cart){
     writeHtml(item);
 }
-displayCartItems()
+displayCartItems();
+displayTotal();
 
 cartItems.addEventListener('click', removeCartItem);
 cartItems.addEventListener('change', modifyCartItemQuantity);
