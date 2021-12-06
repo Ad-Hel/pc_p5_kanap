@@ -98,7 +98,7 @@ const Product = class{
     };
     cost(e){
         let price = document.createElement(e);
-        price.innerText = this.price + " €";
+        price.innerText = new Intl.NumberFormat('fr-FR', {style: 'currency', currency:'EUR'}).format(this.price);
         return price;
     };
 }
