@@ -2,9 +2,8 @@
  * Get html element to populate
  */
 const img = document.querySelector('.item__img');
-const title = document.getElementById('title');
-const price = document.getElementById('price');
-const description = document.getElementById('description');
+const titlePrice = document.querySelector('.item__content__titlePrice');
+const description = document.querySelector('.item__content__description');
 const colors = document.getElementById('colors');
 const quantity = document.getElementById('quantity');
 const addToCart = document.getElementById('addToCart');
@@ -14,31 +13,22 @@ const addToCart = document.getElementById('addToCart');
  */
 let id = new URLSearchParams(window.location.search).get('id');
 
-
-
-function writeImg(product){
-    let imgProduct = document.createElement('img');
-    imgProduct.setAttribute('src', product.imageUrl);
-    imgProduct.setAttribute('alt', product.altTxt);
-    img.appendChild(imgProduct);
-}
-
-function writeColors(product){
-    product.colors.forEach(
-        function(color) {
-        let colorHtml = document.createElement('option');
-        colorHtml.setAttribute('value', color);
-        colorHtml.innerText = color;
-        colors.appendChild(colorHtml);
-    });
-}
-
 function writeProduct(product){
-    writeImg(product);
-    title.innerText = product.name;
-    price.innerText = product.price;
-    description.innerText = product.description;
-    writeColors(product);
+    let productObj = createProduct(product);
+
+    img.appendChild(productObj.img());
+
+    titlePrice.appendChild(productObj.title('h1'));
+
+    titlePrice.appendChild(document.createElement('p'));
+    titlePrice.lastElementChild.innerText = 'Prix : '
+    titlePrice.lastElementChild.appendChild(productObj.cost('span'));
+
+    description.appendChild(productObj.text());
+    
+    productObj.colorsOptions().forEach( color =>{
+        colors.appendChild(color);
+    });
 }
 
 async function showProduct(){
