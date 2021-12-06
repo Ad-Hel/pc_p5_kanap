@@ -19,7 +19,6 @@ function writeHtml(products){
             let articleLink = product.url();
             let article = document.createElement('article');
             let productName = product.title('h3');
-            productName.classList.add('productName')
             articleLink.appendChild(article);
             article.appendChild(product.img());
             article.appendChild(productName);
