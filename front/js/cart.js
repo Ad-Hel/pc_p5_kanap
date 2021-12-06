@@ -97,14 +97,14 @@ function verifyInput(input){
     }
 }
 
-function getCartEntry(e){
+function getCartItem(e){
     let id = e.target.closest('article').getAttribute('data-id');
     let color = e.target.closest('article').getAttribute('data-color');
     return [id, color];
 }
 
-function removeItem(e){
-    let [id, color] = getCartEntry(e);
+function removeCartItem(e){
+    let [id, color] = getCartItem(e);
     if (e.target.classList.contains('deleteItem')){
         console.log('click supprimer')
         deleteCartEntry(id, color);
@@ -114,8 +114,8 @@ function removeItem(e){
     }
 }
 
-function modifyQuantity(e){
-    let [id, color] = getCartEntry(e);
+function modifyCartItemQuantity(e){
+    let [id, color] = getCartItem(e);
     let quantity = parseInt(e.target.value, 10);
     if (e.target.classList.contains('itemQuantity')){
         console.log('change quantity');
@@ -167,8 +167,8 @@ for (item of cart){
 }
 displayCartItems()
 
-cartItems.addEventListener('click', removeItem);
-cartItems.addEventListener('change', modifyQuantity)
+cartItems.addEventListener('click', removeCartItem);
+cartItems.addEventListener('change', modifyCartItemQuantity);
 cartOrderForm.addEventListener('change', function(e){
     verifyInput(e.target)
 })
@@ -179,6 +179,5 @@ orderButton.addEventListener('click', async function(e){
     }
     let res = await sendOrder();
     console.log(res);
-    
 })
 
