@@ -1,4 +1,3 @@
-getLocalCart();
 const cartItems = document.getElementById('cart__items');
 const cartItem = document.getElementsByClassName('cart__item');
 const itemImg = document.getElementsByClassName('cart__item__img');
@@ -128,6 +127,12 @@ function modifyCartItemQuantity(e){
     displayTotal();
 }
 
+function writeHtml(cart){
+    cart.forEach(item => {
+        cartItems.insertAdjacentHTML('beforeend', cartItemTemplate(item));
+    })
+}
+
 async function displayTotal(){
     let price = 0;
     let quantity = 0;
@@ -141,49 +146,32 @@ async function displayTotal(){
     totalQuantity.innerText = quantity;
 }
 
-function writeHtml(cartItem){
-    cartItems.insertAdjacentHTML('beforeend', 
-    `<article class="cart__item" data-id="${cartItem.id}" data-color="${cartItem.color}">
-        <div class="cart__item__img">
-        </div>
-        <div class="cart__item__content">
-            <div class="cart__item__content__description">
-                <p>${cartItem.color}</p>
-            </div>
-        <div class="cart__item__content__settings">
-            <div class="cart__item__content__settings__quantity">
-                <p>Qté : </p>
-                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${cartItem.quantity}">
-            </div>
-            <div class="cart__item__content__settings__delete">
-                <p class="deleteItem">Supprimer</p>
-            </div>
-            </div>
-        </div>
-    </article>`
-    )
-}
-
-async function displayCartItems(){
+async function displayCartItemsDetail(){
     for (element of itemDescription){
         let product = await getProducts(element.closest('article').getAttribute('data-id'));
-        let productObj = createProduct(product);
-        element.insertAdjacentElement('afterbegin', productObj.title('h2'));
-        element.insertAdjacentElement('beforeend', productObj.cost('p'));
+        element.querySelector('h2').innerText = product.name;
+        element.querySelector('p').nextElementSibling.innerText = product.price+' €';
     }
+}
+
+async function displayCartItemsImage(){
     for (element of cartItem){
         let product = await getProducts(element.getAttribute('data-id'));
-        let productObj = createProduct(product);
-        element.children[0].appendChild(productObj.img())
+        element.querySelector('img').setAttribute('src', product.imageUrl);
+        element.querySelector('img').setAttribute('alt', product.altText);
     }
 }
 
-for (item of cart){
-    writeHtml(item);
-}
-displayCartItems();
-displayTotal();
+async function showCart(){
+    getLocalCart();
+    writeHtml(cart);
+    await displayCartItemsDetail();
+    await displayCartItemsImage();
+    displayTotal();
 
+}
+
+showCart();
 cartItems.addEventListener('click', removeCartItem);
 cartItems.addEventListener('change', modifyCartItemQuantity);
 cartOrderForm.addEventListener('change', function(e){
