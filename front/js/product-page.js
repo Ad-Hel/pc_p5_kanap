@@ -1,9 +1,10 @@
 /**
  * Get html element to populate
  */
-const img = document.querySelector('.item__img');
-const titlePrice = document.querySelector('.item__content__titlePrice');
-const description = document.querySelector('.item__content__description');
+const img = document.querySelector('.item__img img');
+const title = document.getElementById('title');
+const price = document.getElementById('price');
+const description = document.getElementById('description');
 const colors = document.getElementById('colors');
 const quantity = document.getElementById('quantity');
 const addToCart = document.getElementById('addToCart');
@@ -13,27 +14,23 @@ const addToCart = document.getElementById('addToCart');
  */
 let id = new URLSearchParams(window.location.search).get('id');
 
-function writeProduct(product){
-    let productObj = createProduct(product);
+function writeDetailProduct(product){
+    img.setAttribute('src', product.imageUrl);
+    img.setAttribute('alt', product.altText);
+    title.innerText = product.name;
+    description.innerText = product.description;
+}
 
-    img.appendChild(productObj.img());
-
-    titlePrice.appendChild(productObj.title('h1'));
-
-    titlePrice.appendChild(document.createElement('p'));
-    titlePrice.lastElementChild.innerText = 'Prix : '
-    titlePrice.lastElementChild.appendChild(productObj.cost('span'));
-
-    description.appendChild(productObj.text());
-    
-    productObj.colorsOptions().forEach( color =>{
-        colors.appendChild(color);
+function writeColorsOptions(productColors){
+    productColors.forEach(color => {
+        colors.insertAdjacentHTML('beforeend', optionTemplate(color));
     });
 }
 
 async function showProduct(){
     let product = await getProducts(id);
-    writeProduct(product);
+    writeDetailProduct(product);
+    writeColorsOptions(product.colors);
 }
 
 addToCart.addEventListener('click', function(){
