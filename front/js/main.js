@@ -41,8 +41,7 @@ function modifyCartEntry(id, color, quantity){
     if (findCartEntry(id, color) != undefined){
         findCartEntry(id,color).quantity = quantity;
     } else{
-        //TO DO : Évaluer la pertinence de cette instruction. Le cas est a priori impossible. 
-        cart.push({id: id, color: color, quantity: quantity})
+        console.log("Impossible to modify undefined cart entry. Id = "+id +" Color: "+color)
     }
 }
 /**
