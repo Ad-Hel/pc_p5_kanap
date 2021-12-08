@@ -13,6 +13,12 @@ const controlNoNumber = '[A-Za-zÀ-ÖØ-öø-ÿ]+-{0,1}\'{0,1}[A-Za-zÀ-ÖØ-ö�
 const controlAddress = '.+ .+ .+'
 let orderContact = '';
 
+
+/**
+ * This function fetch the API to post the order. 
+ * Then it calls the clearCart function.
+ * Then it redirects to the order confirmation page.
+ */
 async function sendOrder(){
     let init = makeOrder()
     orderNumber = fetch('http://localhost:3000/api/products/order/', init)
@@ -29,7 +35,12 @@ async function sendOrder(){
         console.log("Oh non une erreur s'est produite : "+err);
     })
 }
-
+/**
+ * This function make an object with a object contact and an array 'products'.
+ * The objet 'contact' is made from a formdata object.
+ * The array 'products' is made from the variable cart, only the id of the cart entry are taken.
+ * @returns object {method: POST, body: json, mode: 'cors' header: object}
+ */
 function makeOrder(){
     let contact = {};
     let products = [];
@@ -50,7 +61,13 @@ function makeOrder(){
     }
     return init;
 }
-
+/**
+ * This function list all inputs, exclude the submit button and use the verifyInput function on them.
+ * This function iterate the inputs and check if an error message is present.
+ * If an error message is found, then the valid variable is set to false.
+ * The valid variable is returned.
+ * @returns boolean
+ */
 function validAllInputs(){
     let valid = true;
     let inputs = cartOrderForm.querySelectorAll('input');
@@ -72,7 +89,11 @@ function validAllInputs(){
     }
     return valid;
 }
-
+/**
+ * This function apply RegExp test on input value.
+ * The test depends of the type of content expected.
+ * @param {element} input 
+ */
 function verifyInput(input){
     if (input.id == 'email'){
         let control = new RegExp(controlMail);
@@ -97,13 +118,23 @@ function verifyInput(input){
         }
     }
 }
-
+/**
+ * This function get a couple of value from parent element data attributes and returns it.
+ * @param {event} e 
+ * @returns an array with the couple of value
+ */
 function getCartItem(e){
     let id = e.target.closest('article').getAttribute('data-id');
     let color = e.target.closest('article').getAttribute('data-color');
     return [id, color];
 }
-
+/**
+ * This function call getCartItem and affect the returned values to two variables.
+ * This values are pass as params of the deleteCartEntry function.
+ * After the cleanCart function is called, le localStorage cart is update and the element is removed.
+ * The function displayTotal is called to actualize the total price and quantity of the cart.
+ * @param {event} e 
+ */
 function removeCartItem(e){
     let [id, color] = getCartItem(e);
     if (e.target.classList.contains('deleteItem')){
@@ -115,7 +146,14 @@ function removeCartItem(e){
     }
     displayTotal();
 }
-
+/**
+ * This function call getCartItem and affect the returned values to two variables.
+ * It converts to integer the value of the event target.
+ * This values are used as params of the modifyCartEntry function.
+ * The localStorage cart is updated.
+ * The displayTotal function is used to actualize the total price and quantity. 
+ * @param {event} e 
+ */
 function modifyCartItemQuantity(e){
     let [id, color] = getCartItem(e);
     let quantity = parseInt(e.target.value, 10);
@@ -126,13 +164,19 @@ function modifyCartItemQuantity(e){
     }
     displayTotal();
 }
-
+/**
+ * This function iterates the entries of the cart to call the cartItemTemplate function.
+ * This function return a snippet of HTML and is declared in cart.html at line 52.
+ * @param {array} cart 
+ */
 function writeHtml(cart){
     cart.forEach(item => {
         cartItems.insertAdjacentHTML('beforeend', cartItemTemplate(item));
     })
 }
-
+/**
+ * This function iterate the item of the 
+ */
 async function displayTotal(){
     let price = 0;
     let quantity = 0;
@@ -145,7 +189,9 @@ async function displayTotal(){
     totalPrice.innerText = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR'}).format(price);
     totalQuantity.innerText = quantity;
 }
-
+/**
+ * This function iterates the itemDescription elements, gets the Product related and use it to set the title and the price.
+ */
 async function displayCartItemsDetail(){
     for (element of itemDescription){
         let product = await getProducts(element.closest('article').getAttribute('data-id'));
@@ -153,7 +199,9 @@ async function displayCartItemsDetail(){
         element.querySelector('p').nextElementSibling.innerText = product.price+' €';
     }
 }
-
+/**
+ * This function iterates the cartItem elements, gets the Product related and use it to set the image and the alt text.
+ */
 async function displayCartItemsImage(){
     for (element of cartItem){
         let product = await getProducts(element.getAttribute('data-id'));
@@ -161,7 +209,9 @@ async function displayCartItemsImage(){
         element.querySelector('img').setAttribute('alt', product.altText);
     }
 }
-
+/**
+ * This function is used to call the functions in the correct order to build the interface of the cart.
+ */
 async function showCart(){
     getLocalCart();
     writeHtml(cart);
