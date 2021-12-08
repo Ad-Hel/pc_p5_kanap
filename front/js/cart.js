@@ -175,16 +175,15 @@ function writeHtml(cart){
     })
 }
 /**
- * This function iterate the item of the 
+ * This function iterate the cart entries to display the total quantity and price.
  */
-async function displayTotal(){
+ async function displayTotal(){
     let price = 0;
     let quantity = 0;
-    for (let item of cartItem){
-        let product = await getProducts(item.getAttribute('data-id'));
-        let productQuantity = item.querySelector("input.itemQuantity").value;
-        price += product.price * productQuantity;
-        quantity += parseInt(productQuantity, 10);
+    for (let item of cart){
+        let product = await getProducts(item.id);
+        price += product.price * item.quantity;
+        quantity += item.quantity;
     }
     totalPrice.innerText = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR'}).format(price);
     totalQuantity.innerText = quantity;
