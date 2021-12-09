@@ -48,11 +48,16 @@ async function showProduct(){
  * This entry is built with the value of the colors select, the value of the input number quantity and the id of the product.
  */
 addToCart.addEventListener('click', function(){
-    getLocalCart();
     let color = colors.value;
-    let number = parseInt(quantity.value, 10);
-    addCartEntry(id, color, number);
-    setLocalCart(cart);
+    let quantityNumber = parseInt(quantity.value, 10);
+    if (color != "" && quantityNumber > 0){
+        console.log('C\'est dans le panier !');
+        getLocalCart(); 
+        addCartEntry(id, color, quantityNumber);
+        setLocalCart(cart);
+    } else {
+        console.log('Veuillez sélectionner une quantité et une couleur.');
+    }
 })
 
 showProduct();
