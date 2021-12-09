@@ -13,6 +13,9 @@ const controlNoNumber = '[A-Za-zÀ-ÖØ-öø-ÿ]+-{0,1}\'{0,1}[A-Za-zÀ-ÖØ-ö�
 const controlAddress = '.+ .+ .+'
 let orderContact = '';
 
+// ================================
+// === Order building functions ===
+// ================================
 
 /**
  * This function fetch the API to post the order. 
@@ -35,6 +38,7 @@ async function sendOrder(){
         console.log("Oh non une erreur s'est produite : "+err);
     })
 }
+
 /**
  * This function make an object with a object contact and an array 'products'.
  * The objet 'contact' is made from a formdata object.
@@ -89,6 +93,11 @@ function validAllInputs(){
     }
     return valid;
 }
+
+// ========================
+// === Control function ===
+// ========================
+
 /**
  * This function apply RegExp test on input value.
  * The test depends of the type of content expected.
@@ -118,6 +127,11 @@ function verifyInput(input){
         }
     }
 }
+
+// =============================
+// === Cart modify functions ===
+// =============================
+
 /**
  * This function get a couple of value from parent element data attributes and returns it.
  * @param {event} e 
@@ -164,6 +178,11 @@ function modifyCartItemQuantity(e){
     }
     displayTotal();
 }
+
+// ==============================
+// === Cart display functions ===
+// ==============================
+
 /**
  * This function iterates the entries of the cart to call the cartItemTemplate function.
  * This function return a snippet of HTML and is declared in cart.html at line 52.
@@ -219,6 +238,9 @@ async function showCart(){
     displayTotal();
 
 }
+
+
+
 
 showCart();
 cartItems.addEventListener('click', removeCartItem);
