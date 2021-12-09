@@ -1,5 +1,5 @@
 /**
- * Get html element to populate
+ * Get html elements
  */
 const img = document.querySelector('.item__img img');
 const title = document.getElementById('title');
@@ -12,7 +12,7 @@ const addToCart = document.getElementById('addToCart');
 /**
  * Get the id within the url
  */
-let id = new URLSearchParams(window.location.search).get('id');
+const id = new URLSearchParams(window.location.search).get('id');
 
 /**
  * This function set the attribues of the img element and set the inner text of the title and description elements.
@@ -21,6 +21,7 @@ let id = new URLSearchParams(window.location.search).get('id');
 function writeDetailProduct(product){
     img.setAttribute('src', product.imageUrl);
     img.setAttribute('alt', product.altText);
+    price.innerText = Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR'}).format(product.price)
     title.innerText = product.name;
     description.innerText = product.description;
 }
