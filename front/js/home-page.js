@@ -16,7 +16,7 @@ function writeHtml(products){
  * This function has for only purpose to call the API fetch function and pass the response to the writeHtml as param.
  */
 async function showProducts(){
-    const products = await getProducts();
+    const products = await getAllProducts();
     writeHtml(products);
 
 }
