@@ -165,7 +165,9 @@ function modifyCartItemQuantity(e){
 // ==============================
 
 /**
- * This function iterates the entries of the cart to call the cartItemTemplate function.
+ * This function iterates the entries of the cart.
+ * For each entry the API is called to build an item.
+ * This item is used as param of the cartItemTemplate() function.
  * This function return a snippet of HTML and is declared in cart.html at line 52.
  * @param {array} cart 
  */
