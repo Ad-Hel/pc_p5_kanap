@@ -37,6 +37,28 @@
     return products;
 }
 
+/**
+ * This function fetch the API to post the order. 
+ * Then it calls the clearCart function.
+ * Then it redirects to the order confirmation page.
+ */
+ async function sendOrder(){
+    let init = makeOrder()
+    orderNumber = fetch('http://localhost:3000/api/products/order/', init)
+    .then(function(res){
+        if(res.ok){
+            return res.json();
+        }
+    } )
+    .then(function(res){
+        clearCart();
+        window.location.href = './confirmation.html?orderId='+res.orderId;
+    })
+    .catch(function(err){
+        console.log("Oh non une erreur s'est produite : "+err);
+    })
+}
+
 // =======================
 // === CART MANAGEMENT ===
 // =======================
