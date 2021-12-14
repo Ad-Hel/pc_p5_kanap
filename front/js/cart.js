@@ -169,33 +169,20 @@ function modifyCartItemQuantity(e){
  * This function return a snippet of HTML and is declared in cart.html at line 52.
  * @param {array} cart 
  */
-function writeHtml(cart){
-    cart.forEach(item => {
-        console.log(item);
-        cartItems.insertAdjacentHTML('beforeend', cartItemTemplate(item));
+async function writeHtml(cart){
+    cart.forEach( async item =>  {
+        let product = await getProducts(item.id);
+        let cartItem = {
+            id: item.id,
+            color: item.color,
+            quantity: item.quantity,
+            imageUrl: product.imageUrl,
+            altText: product.altText,
+            name: product.name,
+            price: new Intl.NumberFormat( 'fr-FR', {style: 'currency', currency: 'EUR'} ).format(product.price)
+        }
+        cartItems.insertAdjacentHTML('beforeend', cartItemTemplate(cartItem));
     })
-}
-
-/**
- * This function iterates the itemDescription elements, gets the Product related and use it to set the title and the price.
- */
-async function displayCartItemsDetail(){
-    for (element of itemDescription){
-        let product = await getProducts(element.closest('article').getAttribute('data-id'));
-        element.querySelector('h2').innerText = product.name;
-        element.querySelector('p').nextElementSibling.innerText = product.price+' €';
-    }
-}
-
-/**
- * This function iterates the cartItem elements, gets the Product related and use it to set the image and the alt text.
- */
-async function displayCartItemsImage(){
-    for (element of cartItem){
-        let product = await getProducts(element.getAttribute('data-id'));
-        element.querySelector('img').setAttribute('src', product.imageUrl);
-        element.querySelector('img').setAttribute('alt', product.altText);
-    }
 }
 
 /**
@@ -218,22 +205,22 @@ async function displayCartItemsImage(){
  */
 async function showCart(){
     getLocalCart();
-    writeHtml(cart);
-    await displayCartItemsDetail();
-    await displayCartItemsImage();
+    await writeHtml(cart);
     displayTotal();
-
 }
 
-
-
-
+// On load
 showCart();
+
+// Delete button listener
 cartItems.addEventListener('click', removeCartItem);
+// Quantity input listener
 cartItems.addEventListener('change', modifyCartItemQuantity);
+// Contact form inputs listener
 cartOrderForm.addEventListener('input', function(e){
     verifyInput(e.target)
 })
+// Order button listener
 orderButton.addEventListener('click', async function(e){
     e.preventDefault();
     if (validAllInputs()){
@@ -241,4 +228,3 @@ orderButton.addEventListener('click', async function(e){
     }
     let res = await sendOrder();
 })
-
