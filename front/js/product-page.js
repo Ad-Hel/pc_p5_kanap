@@ -21,7 +21,7 @@ const id = new URLSearchParams(window.location.search).get('id');
 function writeDetailProduct(product){
     img.setAttribute('src', product.imageUrl);
     img.setAttribute('alt', product.altText);
-    price.innerText = Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR'}).format(product.price)
+    price.innerText = Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR'}).format(product.price);
     title.innerText = product.name;
     description.innerText = product.description;
 }
