@@ -8,36 +8,14 @@ const totalPrice = document.getElementById('totalPrice');
 const totalQuantity = document.getElementById('totalQuantity');
 const cartOrderForm = document.getElementsByClassName('cart__order__form')[0];
 const orderButton = document.getElementById('order');
-const controlMail = '.{1,}@.{1,}\..';
-const controlNoNumber = '[A-Za-zÀ-ÖØ-öø-ÿ]+-{0,1}\'{0,1}[A-Za-zÀ-ÖØ-öø-ÿ]+'
-const controlAddress = '.+ .+ .+'
+const regexMail = /\S+@\S+\.\S+/g;
+const regexNoNumber = /[A-Za-zÀ-ÖØ-öø-ÿ]+-{0,1}\'{0,1}[A-Za-zÀ-ÖØ-öø-ÿ]*/g;
+const regexAddress = /\S+ \S+ \S+/g;
 let orderContact = '';
 
 // ================================
 // === Order building functions ===
 // ================================
-
-/**
- * This function fetch the API to post the order. 
- * Then it calls the clearCart function.
- * Then it redirects to the order confirmation page.
- */
-async function sendOrder(){
-    let init = makeOrder()
-    orderNumber = fetch('http://localhost:3000/api/products/order/', init)
-    .then(function(res){
-        if(res.ok){
-            return res.json();
-        }
-    } )
-    .then(function(res){
-        clearCart();
-        window.location.href = './confirmation.html?orderId='+res.orderId;
-    })
-    .catch(function(err){
-        console.log("Oh non une erreur s'est produite : "+err);
-    })
-}
 
 /**
  * This function make an object with a object contact and an array 'products'.
@@ -104,28 +82,32 @@ function validAllInputs(){
  * @param {element} input 
  */
 function verifyInput(input){
-    if (input.id == 'email'){
-        let control = new RegExp(controlMail);
-        if (control.test(input.value)){
-            input.nextElementSibling.innerText = '';
+    if (input.value == ''){
+        input.nextElementSibling.innerText = 'Ce champ est obligatoire';
+    } else {
+        if (input.id == 'email'){
+            regexMail.lastIndex = 0;          
+            if (regexMail.test(input.value)){
+                input.nextElementSibling.innerText = '';
+            } else{
+                input.nextElementSibling.innerText = 'Le mail doit être au format : adresse@domain.dot';
+            }
+        } else if(input.id == 'address'){
+            regexAddress.lastIndex = 0; 
+            if (regexAddress.test(input.value)){
+                input.nextElementSibling.innerText = '';
+            } else{
+                input.nextElementSibling.innerText = 'L\'adresse semble incorrecte. Format attendu : N° typerue nomderue';
+            }
         } else{
-            input.nextElementSibling.innerText = 'Le mail doit être au format : adresse@domain.dot';
+            regexNoNumber.lastIndex = 0; 
+            if (regexNoNumber.test(input.value)){
+                input.nextElementSibling.innerText = '';
+            } else{
+                input.nextElementSibling.innerText = 'Les nombres ne sont pas autorisés.'; 
+            }
         }
-    } else if(input.id == 'address'){
-        let control = new RegExp(controlAddress);
-        if (control.test(input.value)){
-            input.nextElementSibling.innerText = '';
-        } else{
-            input.nextElementSibling.innerText = 'L\'adresse semble incorrecte. Format attendu : N° typerue nomderue';
-        }
-    } else{
-        let control = new RegExp(controlNoNumber);
-        if (control.test(input.value)){
-            input.nextElementSibling.innerText = '';
-        } else{
-            input.nextElementSibling.innerText = 'Les nombres ne sont pas autorisés.'; 
-        }
-    }
+    }  
 }
 
 // =============================
@@ -152,7 +134,6 @@ function getCartItem(e){
 function removeCartItem(e){
     let [id, color] = getCartItem(e);
     if (e.target.classList.contains('deleteItem')){
-        console.log('click supprimer')
         deleteCartEntry(id, color);
         cleanCart();
         setLocalCart(cart)
@@ -190,9 +171,33 @@ function modifyCartItemQuantity(e){
  */
 function writeHtml(cart){
     cart.forEach(item => {
+        console.log(item);
         cartItems.insertAdjacentHTML('beforeend', cartItemTemplate(item));
     })
 }
+
+/**
+ * This function iterates the itemDescription elements, gets the Product related and use it to set the title and the price.
+ */
+async function displayCartItemsDetail(){
+    for (element of itemDescription){
+        let product = await getProducts(element.closest('article').getAttribute('data-id'));
+        element.querySelector('h2').innerText = product.name;
+        element.querySelector('p').nextElementSibling.innerText = product.price+' €';
+    }
+}
+
+/**
+ * This function iterates the cartItem elements, gets the Product related and use it to set the image and the alt text.
+ */
+async function displayCartItemsImage(){
+    for (element of cartItem){
+        let product = await getProducts(element.getAttribute('data-id'));
+        element.querySelector('img').setAttribute('src', product.imageUrl);
+        element.querySelector('img').setAttribute('alt', product.altText);
+    }
+}
+
 /**
  * This function iterate the cart entries to display the total quantity and price.
  */
@@ -207,26 +212,7 @@ function writeHtml(cart){
     totalPrice.innerText = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR'}).format(price);
     totalQuantity.innerText = quantity;
 }
-/**
- * This function iterates the itemDescription elements, gets the Product related and use it to set the title and the price.
- */
-async function displayCartItemsDetail(){
-    for (element of itemDescription){
-        let product = await getProducts(element.closest('article').getAttribute('data-id'));
-        element.querySelector('h2').innerText = product.name;
-        element.querySelector('p').nextElementSibling.innerText = product.price+' €';
-    }
-}
-/**
- * This function iterates the cartItem elements, gets the Product related and use it to set the image and the alt text.
- */
-async function displayCartItemsImage(){
-    for (element of cartItem){
-        let product = await getProducts(element.getAttribute('data-id'));
-        element.querySelector('img').setAttribute('src', product.imageUrl);
-        element.querySelector('img').setAttribute('alt', product.altText);
-    }
-}
+
 /**
  * This function is used to call the functions in the correct order to build the interface of the cart.
  */
@@ -245,7 +231,7 @@ async function showCart(){
 showCart();
 cartItems.addEventListener('click', removeCartItem);
 cartItems.addEventListener('change', modifyCartItemQuantity);
-cartOrderForm.addEventListener('change', function(e){
+cartOrderForm.addEventListener('input', function(e){
     verifyInput(e.target)
 })
 orderButton.addEventListener('click', async function(e){
